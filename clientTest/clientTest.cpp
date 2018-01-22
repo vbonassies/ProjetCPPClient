@@ -36,9 +36,12 @@ int process_client(client_type &new_client)
 		{
 			const auto i_result = recv(new_client.socket, new_client.received_message, DEFAULT_BUFLEN, 0);
 
-			if (i_result != SOCKET_ERROR)
+			// Print messages from server comming from other clients
+			if (i_result != SOCKET_ERROR) {
+				std::cout << "\r";
 				std::cout << new_client.received_message << std::endl;
-			else
+				std::cout << "me: ";
+			} else
 			{
 				std::cout << "recv() failed: " << WSAGetLastError() << std::endl;
 				break;
@@ -149,6 +152,7 @@ int main()
 
 		while (true)
 		{
+			std::cout << "me: ";
 			getline(std::cin, sent_message);
 			i_result = send(client.socket, (sent_message).c_str(), strlen(sent_message.c_str()), 0);
 
@@ -162,8 +166,9 @@ int main()
 		//Shutdown the connection since no more data will be sent
 		my_thread.detach();
 	}
-	else
+	else {
 		std::cout << client.received_message << std::endl;
+	}
 
 	std::cout << "Shutting down socket..." << std::endl;
 	i_result = shutdown(client.socket, SD_SEND);
